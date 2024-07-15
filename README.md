@@ -15,3 +15,23 @@
 
 ### Summary 
 > 디자인패턴은 재사용 가능한 경험으로, 실수와 경험하지 못한 결정에 도움을 줌
+
+
+
+## DesignPatterns - Introduction 
+**7 most crucial design patterns**
+### Creational  
+1. Singleton Pattern
+2. Factory Method Pattern
+3. Builder Pattern 
+> Creational Design Pattern은 객체 생성을 위해 사용된다. 이 패턴들은 객체를 유연하고 적응력이 뛰어나는 방법이며, 재사용성이 뛰어나다.
+
+### Structural 
+1. Adapter Pattern
+> Structural Design Pattern은 엔티티간 관계를 화율적이고 사용성이 높게 결합하는 방법으로, 복잡한 구조적 계층의 객체를 생성하는데 가장 효율적으로 사용된다. 
+
+### Behavioral 
+1. Strategy Pattern 
+2. Observer Pattern 
+3. State Pattern
+> Behavior Design Pattern은 객체간의 상호관계와 커뮤니테이션을 향상하기 위해 사용된다. 여기 패턴들은 객체간 메시지 교환 시에 결합도를 낮추는데 도움을 준다. 
