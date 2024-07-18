@@ -101,6 +101,58 @@ class UserView {
 ![openclose](../imgs/openclose.png)
 위처럼 `Calculate` class에 기능을 추가하거나 변경하고싶을 때는, `Calculate` class를 직접 수정하는 것이 아니라 확장/상속하여 새로운 가능을 추가하여야 한다.  
 
+```dart
+class Shape {
+  Stirng type;
+  Shape(this.type);
+}
+
+class AreaCalculator {
+  double calculateArea(Shape shape) {
+    if (shape.type == 'circle') {
+      // calculation area of  circle
+    } else if (shape.type == 'square') {
+      // calculation area of  square
+    }
+  }
+}
+```
+위에 `Shape` class는 확장성이 전혀 없고 `AreaCalculator`에서는 수정에 대해 닫혀있지 않다. 
+이러한 양상은 유지보수의 어려움과 버그 위험성을 야기한다. 
+따라서 OCP를 지키며 다양한 모양으로 `AreaCalculator`에서 계산하기 위해서는 `Shape`클래스를 아래와 같이 확장하기 쉽게 만들 수 있다.  
+
+1. `Shape` class를 abstract class로 바꾼다. 
+2. 만들고싶은 모양의 클래스(Circle, Square)를 만들고 `Shape`를 상속한다. 
+3. 각 클래스별 `calculateArea`메소드를 `override`하여 계산한다.
+4. `AreaCalculator` class에서는 더이상 계산하는 모양의 타입이 어떤 것인지 알 필요 없이 계산 가능하다.
+```dart
+abstract class Shape {
+  double calculateArea();
+}
+
+class Circle extends Shape {
+  final double radius;
+  const Circle(this.radius);
+  
+  @override 
+  double calculateArea() => 3.14 * radius * radius;  
+}
+
+class Square extends Shape {
+  final double side;
+  const Square(this.side);
+  
+  @override
+   double calculateArea() => side * side;
+}
+
+class AreaCalculator {
+  double calculateArea(Shape shape) {
+    return shape.calculateArea();
+  } 
+}
+```
+
 ### Liskov Substitution Principle
  Class B가 Class A의 하위 타입일 때 프로그램에서 아무 문제 없이 A 대신에 B를 사용할 수 있어야 한다.
  ![liskov](../imgs/liskov.png)
