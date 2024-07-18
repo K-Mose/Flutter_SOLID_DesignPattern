@@ -52,6 +52,51 @@ e.g. 하나의 책임 예
 
 위처럼 클래스는 하나의 책임만을 전문적으로 다룬다. 
 
+<b>Code Example</b>
+```dart
+class User {
+  String name;
+  String email;
+  
+  User(this.name, this.email);
+  
+  void saveUserToDatabase(User user) {
+    // save user to the database
+  }
+  
+  void showWelcomeMessage(User user) {
+    print('Welcome ${user.name}!');
+  }
+}
+```
+위 코드는 하나의 클래스 안에서 여러 개의 책음을 가지고 있다. 
+데이터 클래스, 데이터 저장, 화면 출력 세 가지의 책임을 가지며 추후 클래스 관리 측면에서 어려뭄을 줄 수 있다.
+
+따라서 아래와 같이 책임별 클래스를 분리할 수 있다.  
+```dart
+// 데이터 클래스로 데이터에 대한 책임만 포함
+class User {
+  String name;
+  String email;
+
+  User(this.name, this.email);
+}
+
+// DB 관련 책임만 포함
+class UserRepository {
+  void saveUserToDatabase(User user) {
+    // save user to the database
+  }
+}
+
+// 화면 출력 책임만 포함
+class UserView {
+  void showWelcomeMessage(User user) {
+    print('Welcome ${user.name}!');
+  }
+}
+```
+
 ### Open-Closed Principle
 ![openclose](../imgs/openclose.png)
 위처럼 `Calculate` class에 기능을 추가하거나 변경하고싶을 때는, `Calculate` class를 직접 수정하는 것이 아니라 확장/상속하여 새로운 가능을 추가하여야 한다.  
