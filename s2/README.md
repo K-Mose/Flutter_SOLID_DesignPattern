@@ -156,7 +156,100 @@ class AreaCalculator {
 ### Liskov Substitution Principle
  Class B가 Class A의 하위 타입일 때 프로그램에서 아무 문제 없이 A 대신에 B를 사용할 수 있어야 한다.
  ![liskov](../imgs/liskov.png)
- 위에서 `Shape`의 하위 클래스들은 `Shape`의 모든 기능을 사용할 수 있어야 한다.  
+ 위에서 `Shape`의 하위 클래스들은 `Shape`의 모든 기능을 사용할 수 있어야 한다.
+
+아래 코드는 추상 객체를 통해서 클래스를생성하는 괜찮아 보이는 코드인 것 같지만 3가지의 문제가 있음
+1. 모든 하위 클래스에서 정의가 적절하게 되지 않음 (ElectricCar의 refuel 메소드)
+2. 상위 클래스가 더 많은 하위 클래스를 갖거나 interface로써의 역할이 고려되지 않음
+3. 하위 클래스가 상위 클래스 대신 사용될 때 문제가 발생할 수 있음
+```dart
+abstract class Vehicle {
+  void refuel();
+  void move();
+}
+
+class ElectricCar extends Vehicle {
+  @override
+  void refuel() {
+    print('Charging the battery...');
+  }
+  
+  @override
+  void move() {
+    print('Moving...');
+  }
+}
+
+class PatrolCar extends Vehicle {
+  @overried
+  void refuel() {
+    print('refilling the petrol...');
+  }
+  
+  @overrid
+  void move() {
+    print('Moving...');
+  }
+}
+
+void serviceVehicle(Vehicle vehicle) {
+  vehicle.refuel();
+  // Some more servicing activites.
+}
+```
+
+연료를 사용하는 차량은 `refuel` 메소드가 필요하지만 전기를 사용하는 차량은 `recharging` 메소드가 필요하므로 Liskov Substitution Principle에 위배된다.
+따라서 아래와 같이 분리하여 사용
+
+```dart
+abstract class Vehicle {
+  void move();
+}
+
+abstract class FuelVehicle extends Vehicle {
+  void refuel();
+}
+
+abstract class ElectricVehicle extends Vehicle {
+  void charge();
+}
+
+class ElectricCar extends ElectricVehicle {
+  @override
+  void Charge() {
+    print('Charging the battery...');
+  }
+
+  @override
+  void move() {
+    print('Moving...');
+  }
+}
+
+class PatrolCar extends FuelVehicle {
+  @overried
+  void refuel() {
+    print('refilling the petrol...');
+  }
+
+  @overrid
+  void move() {
+    print('Moving...');
+  }
+}
+
+void serviceFuelVehicle(FuelVehicle vehicle) {
+  vehicle.refuel();
+  // Some more servicing activites.
+}
+
+void serviceElectricVehicle(ElectricVehicle vehicle) {
+  vehicle.chargning();
+  // Some more servicing activites.
+}
+```
+1. 기존의 `Vehicle`클래스를 `FuelVehicle`과 `ElectricVehicle`로 분리
+2. service method를 각각의 `Vehicle`의 하위 타입을 받는 함수로 분리, 다른 타입은 해당 함수를 사용할 수 없음 (해당하는 타입만 대체 가능하도록)  
 
 ### Interface Segregation Principle
 인터페이스의 세분화.
