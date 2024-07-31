@@ -256,7 +256,116 @@ void serviceElectricVehicle(ElectricVehicle vehicle) {
 ![interface](../imgs/interface.png)
 위와 같이 `FileLogger`에서는 `openConnection / closeConnection` 함수가 필요 없다.  
 하나의 interface에서만 확장한 경우에는 특정 Logger class에서 사용하지 않는 함수가 들어갈 수 있기 때문에 
-interface를 필요한 기능들만 묶어 세분화하여 작성한다.  
+interface를 필요한 기능들만 묶어 세분화하여 작성한다.
+
+아래 코드에서 SmartPhone과 SmartWatch는 둘 다 SmartDevice를 상속하지만 
+SmartWatch에서는 모든 함수들을 사용하지 않아 문제가 생긴다. 
+```dart
+abstract class SmartDevice {
+  void makeCall();
+  void sendEmail();
+  void browseInternet();
+  void takePicture();
+}
+
+class SmartPhone implements SmartDevice {
+  @override
+  void makeCall() {
+    print('Making a call...');
+  }
+  
+  @override
+  void sendEmail() {
+    print('Sending an email...');
+  }
+  
+  @override
+  void browseInternet() {
+    print('Browsing the Internet...');
+  }
+  
+  @override
+  void takePicture() {
+    print('Taking a picture...');
+  }
+}
+
+
+
+class SmartWatch Implements SmartDevice {
+  @override
+  void makeCall() {
+    print('Making a call...');
+  }
+  
+  @override
+  void sendEmail() {
+    throw UniplementedError('This deice cannot send emails');
+  }
+  
+  @override
+  void browseInternet() {
+    throw UniplementedError('This deice cannot browse the Internet');
+  }
+  
+  @override
+  void takePicture() {
+    throw UniplementedError('This deice cannot take picture');
+  }
+}
+```
+
+인터페이스를 세분화하여 각 클래스에서 필요한 인터페이스만 상속할 수 있도록 수정한다.
+
+```dart
+abstract class Phone {
+  void makeCall();
+}
+
+abstract class EmailDevice {
+  void sendEmail();
+}
+
+abstract class WebBrowser {
+  void browseInternet();
+}
+
+abstract class Camera {
+  void takePicture();
+}
+
+class SmartWatch implements Phone {
+  @override
+  void makeCall() {
+    print('Making a call...');
+  }
+}
+
+class SmartPhone implements Phone, EmailDevice, WebBrowser, Camera {
+  @override
+  void makeCall() {
+    print('Making a call...');
+  }
+
+  @override
+  void sendEmail() {
+    print('Sending an email...');
+  }
+
+  @override
+  void browseInternet() {
+    print('Browsing the Internet...');
+  }
+
+  @override
+  void takePicture() {
+    print('Taking a picture...');
+  }
+}
+```
+1. 재구성한 인터페이스에서는 기존 `SmartDevice` 인터페이스를 세분화하여 `Phone`, `EmailDevice`, `WebBrowser`, `Camera`로 분할했다.
+2. `SmartPhone`과 `SmartWatch` 클래스는 각각 필요한 인터페이스만 상속하여 구현한다. 
+3. 이 경우에 기존 인터페이스와는 달리 `SmartWatch`는 필요없는 기능들을 상속 및 구현을 할 필요가 없다.  
 
 ### Dependency Inversion Principle
 구현체가 아닌 추상체에 의존해야 한다.
