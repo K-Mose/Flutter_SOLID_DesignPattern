@@ -371,4 +371,102 @@ class SmartPhone implements Phone, EmailDevice, WebBrowser, Camera {
 구현체가 아닌 추상체에 의존해야 한다.
 ![di](../imgs/di.png)
 위에서 처럼 `BookService`가 `NumberGenerator` interface를 의존하여 생성하는 번호가 ISBN인지 ISSN인지는 알 필요는 없다.    
-하위 클래스간 의존한다면 클래스 수정에 많은 비용이 들지만 상위 interface/abstract를 의존하면 간단히 수정 가능하다.  
+하위 클래스간 의존한다면 클래스 수정에 많은 비용이 들지만 상위 interface/abstract를 의존하면 간단히 수정 가능하다.
+
+아래 코드는 고수준의 코드가 구현된 저수준의 코드를 직접 연결(의존)되어 있어서 저수준의 코드를 수정하면 고수준의 코드가 쉽게 영향을 받게 된다.
+고수준의 `UserService`가 저수준의 구현체인 `MySQLDatabase`를 직접 의존하기 때문에 DIP에 위배된다. 
+DIP를 위반하게되면 수정하기 어렵고 유연하지 못한 코드가 작성된다. 
+```dart
+class User{
+  String name;
+  // ...
+  
+  User(this.name);
+}
+
+// 저수준 코드
+class MySQLDatabase {
+  void saveUser(User user) {
+    print('Saving ${user.name} to MySQL database...');
+    // 저장 로직 ...
+  }
+}
+
+// 고수준 코드
+class UserService {
+  MySQLDatavase database;
+  
+  UserService(this.database);
+  
+  void saveUser(User user) {
+    database.saveUser(user);
+  }
+}
+```
+Dependency Inversion을 위한 힌트
+1. 고수준과 저수준 사이의 의존성을 찾는다. 
+2. 인터페이스나 추상 클래스를 사용하여 모듈간 결합을 느슨하게 한다. 
+3. 고수준의 모듈의 수정은 저수준의 모듈이 아닌 추상체에 의존 시킨다. 
+4. 각각의 모듈에서 추상체를 구현한다. 
+5. DI는 저수준의 모듈을 고수준의 모듈에 제공하기 위해서 사용한다. 
+
+
+```dart
+// 추상 클래스 생성
+abstract class Database{
+  void saveUser(User user);
+}
+
+class MySQLDatabase implements Database {
+  
+  // 모듈에서 추상체 구현
+  @override
+  void saveUser(User user) {
+    print('Saving ${user.name} to MySQL database...');
+    // 저장 로직 ...
+  }
+}
+
+// Database 추상체를 상속하는 다른 db를 구현할 수 있다.
+class PostgreDatabase implements Database {
+  
+  @override
+  void saveUser(User user) {
+    print('Saving ${user.name} to Postgre database...');
+    // 저장 로직 ...
+  }
+}
+
+class UserService {
+  // DI를 할 때 사용되는 DB를 사용하기 때문에
+  // UserService에서는 Database가 MySQLDatabase 타입인지 PostgreDatabase 타입인지 신경쓸 필요가 없다. 
+  Database database;
+  
+  UserService(this.database);
+  
+  void saveUser(User user) {
+    database.saveUser(user);
+  }
+}
+```
+위처럼 추상 클래스를 구현하여, 추상체를 상속하는 다양한 종류의 DB 생성 할 수 있다.
+그리고 `UserService`에서는 추상체와 연결되기 때문에 어떤 Database를 사용하는지 알 필요가 없고, 쉽게 사용할 Database를 바꿀 수 있다.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
